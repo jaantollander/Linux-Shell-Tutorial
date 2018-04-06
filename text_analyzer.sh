@@ -58,32 +58,40 @@ done
 # by now $@ has only rubish filtered out by 'getopt', could be a file name
 
 # STDIN: Overwrites any supplied -f arguments if given
-FILE=${FILE:-$1}
+# FILE=${FILE:-$1}
+STDIN=$1  # FIXME: script should work like 'cat bash.txt | ./script -t 10 -w'
+
 
 # -- The algorithm --
-text=$(cat $FILE)
+if [[ -z $STDIN ]]; then
+  text=$(cat $FILE)
+else
+  text=$STDIN
+fi
+
 
 # Create a list of words. Word is defined as the pattern '[a-zA-Z]+'.
 words=$(grep -E -o '[a-zA-Z]+' $FILE)
 # Remove all all characters exept alphabetic, line endings or white spaces.
 # words=$(tr $text -dc '[:alpha:]\r\n ')
 
-# TODO: count the number of times a particular word appears in the text
+# Count the number of times a particular word appears in the text
 declare -iA count
 for word in $words; do
+  #TODO: make case insensitivity
   if [[ -z count[$word] ]]; then
-    # Set the count to one
     count[${word}]=1
   else
-    # Increment the count by one
     count[${word}]+=1
   fi
 done
+
 
 # Reports total number of characters in the document
 if [[ $CHARACTERS == 0 ]]; then
   echo "Total number of characters in the document: ${#text}"
 fi
+
 
 # Reports total number of words in the document
 if [[ $WORDS == 0 ]]; then
@@ -94,12 +102,29 @@ if [[ $WORDS == 0 ]]; then
   echo "Total number of words in the document: ${number_of_words}"
 fi
 
+
 # TODO: top 'n' most common words, where n is any positive integer
 if [[ -z $n && $n > 0 ]]; then
   :
 fi
 
-# TODO: sorted list of how often appear words of different lengths
+
+# TODO: sorted list of how often words appear of different lengths
 if [[ $SORTED == 0 ]]; then
-  :
+  # TODO: make sorted
+
+  declare -iA count_by_length
+  for word in ${!words}; do
+    length=${#word}
+    if [[ -z count_by_length[$length] ]]; then
+      count_by_length[$length]=${words[$word]}
+    else
+      count_by_length[$length]+=${words[$word]}
+    fi
+  done
+
+  echo "words # word length"
+  for length in ${!count_by_length[@]}; do
+    echo ${count_by_length[$length]} $length
+  done
 fi

@@ -32,10 +32,8 @@ for fpath in ${directory}/*; do
 
   # Does the key (filepath) already exist in the associative array
   if [[ -z count[$filetype] ]]; then
-    # Set the count to one
     count[${filetype}]=1
   else
-    # Increment the count by one
     count[${filetype}]+=1
   fi
 
