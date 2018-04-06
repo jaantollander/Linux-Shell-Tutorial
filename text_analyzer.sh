@@ -57,9 +57,8 @@ while :; do
 done
 # by now $@ has only rubish filtered out by 'getopt', could be a file name
 
-# STDIN: Overwrites any supplied -f arguments
-FILE=$1
-
+# STDIN: Overwrites any supplied -f arguments if given
+FILE=${FILE:-$1}
 
 # -- The algorithm --
 text=$(cat $FILE)
@@ -69,24 +68,27 @@ text=$(cat $FILE)
 # TODO: a word should be defined as [a-zA-z]+
 # words=$(tr $text -dc '[:alpha:]\r\n ')
 
+# FIXME
+# words=$(grep -E '[a-zA-Z]+' $FILE)
+# echo $words
 
+# Reports total number of characters in the document
 if [[ $CHARACTERS == 0 ]]; then
-  # TODO: reports total number of characters in the document
   echo "Total number of characters in the document: ${#text}"
 fi
 
+# TODO: reports total number of words in the document
 if [[ $WORDS == 0 ]]; then
-  # TODO: reports total number of words in the document
   # TODO: count the number of times a particular word appears in the text
   declare -iA count
 fi
 
+# TODO: top 'n' most common words, where n is any positive integer
 if [[ -z $n && $n > 0 ]]; then
-  # TODO: top 'n' most common words, where n is any positive integer
   :
 fi
 
+# TODO: sorted list of how often appear words of different lengths
 if [[ $SORTED == 0 ]]; then
-  # TODO: sorted list of how often appear words of different lengths
   :
 fi
