@@ -2,6 +2,9 @@
 Homework exercises from [Linux shell tutorial](http://scicomp.aalto.fi/training/linux-shell-tutorial.html).
 
 
+NOTE: All the scripts must be compatible with Bash v4.3.
+
+
 ## 1. Counting files by type (10 points)
 
 Write two versions of script that counts how many files there
