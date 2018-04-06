@@ -26,8 +26,7 @@ directory=${1:-.}
 declare -iA count
 
 # Iterate over each file in the directory
-for fpath in ${directory}/*
-do
+for fpath in ${directory}/*; do
   # Get brief description of the filetype of given directory
   filetype=$(file -b ${fpath})
 
@@ -43,7 +42,6 @@ do
 done
 
 # Print the elements in the associative array
-for filetype in "${!count[@]}"
-do
+for filetype in "${!count[@]}"; do
   echo ${count[${filetype}]} $filetype
 done

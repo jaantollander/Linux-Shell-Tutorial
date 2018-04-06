@@ -63,24 +63,35 @@ FILE=${FILE:-$1}
 # -- The algorithm --
 text=$(cat $FILE)
 
-# Create a list of words
+# Create a list of words. Word is defined as the pattern '[a-zA-Z]+'.
+words=$(grep -E -o '[a-zA-Z]+' $FILE)
 # Remove all all characters exept alphabetic, line endings or white spaces.
-# TODO: a word should be defined as [a-zA-z]+
 # words=$(tr $text -dc '[:alpha:]\r\n ')
 
-# FIXME
-# words=$(grep -E '[a-zA-Z]+' $FILE)
-# echo $words
+# TODO: count the number of times a particular word appears in the text
+declare -iA count
+for word in $words; do
+  if [[ -z count[$word] ]]; then
+    # Set the count to one
+    count[${word}]=1
+  else
+    # Increment the count by one
+    count[${word}]+=1
+  fi
+done
 
 # Reports total number of characters in the document
 if [[ $CHARACTERS == 0 ]]; then
   echo "Total number of characters in the document: ${#text}"
 fi
 
-# TODO: reports total number of words in the document
+# Reports total number of words in the document
 if [[ $WORDS == 0 ]]; then
-  # TODO: count the number of times a particular word appears in the text
-  declare -iA count
+  number_of_words=0
+  for i in ${count[@]}; do
+    number_of_words=$(($number_of_words+$i))
+  done
+  echo "Total number of words in the document: ${number_of_words}"
 fi
 
 # TODO: top 'n' most common words, where n is any positive integer
