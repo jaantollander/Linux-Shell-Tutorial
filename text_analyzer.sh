@@ -57,11 +57,36 @@ while :; do
 done
 # by now $@ has only rubish filtered out by 'getopt', could be a file name
 
-STDIN=$1
+# STDIN: Overwrites any supplied -f arguments
+FILE=$1
 
 
 # -- The algorithm --
+text=$(cat $FILE)
 
-# TODO: replace special characters with spaces
-# TODO: list of words
-# TODO: sort
+# Create a list of words
+# Remove all all characters exept alphabetic, line endings or white spaces.
+# TODO: a word should be defined as [a-zA-z]+
+# words=$(tr $text -dc '[:alpha:]\r\n ')
+
+
+if [[ $CHARACTERS == 0 ]]; then
+  # TODO: reports total number of characters in the document
+  echo "Total number of characters in the document: ${#text}"
+fi
+
+if [[ $WORDS == 0 ]]; then
+  # TODO: reports total number of words in the document
+  # TODO: count the number of times a particular word appears in the text
+  declare -iA count
+fi
+
+if [[ -z $n && $n > 0 ]]; then
+  # TODO: top 'n' most common words, where n is any positive integer
+  :
+fi
+
+if [[ $SORTED == 0 ]]; then
+  # TODO: sorted list of how often appear words of different lengths
+  :
+fi

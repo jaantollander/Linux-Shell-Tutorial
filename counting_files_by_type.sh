@@ -23,7 +23,7 @@
 directory=${1:-.}
 
 # Count the unique filetypes in an associative array which has integer elements
-declare -iA counts
+declare -iA count
 
 # Iterate over each file in the directory
 for fpath in ${directory}/*
@@ -32,18 +32,18 @@ do
   filetype=$(file -b ${fpath})
 
   # Does the key (filepath) already exist in the associative array
-  if [[ -z counts[$filetype] ]]; then
+  if [[ -z count[$filetype] ]]; then
     # Set the count to one
-    counts[${filetype}]=1
+    count[${filetype}]=1
   else
     # Increment the count by one
-    counts[${filetype}]+=1
+    count[${filetype}]+=1
   fi
 
 done
 
 # Print the elements in the associative array
-for filetype in "${!counts[@]}"
+for filetype in "${!count[@]}"
 do
-  echo ${counts[${filetype}]} $filetype
+  echo ${count[${filetype}]} $filetype
 done
