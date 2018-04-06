@@ -19,9 +19,8 @@
 
 # TODO: getopt
 
-# Directory to search with default value of .
-arg1=$1
-directory=${arg1:=.}
+# Directory to search with default value of "."
+directory=${1:-.}
 
 # Count the unique filetypes in an associative array which has integer elements
 declare -iA counts
