@@ -59,10 +59,11 @@ done
 
 
 # -- The algorithm --
-# STDIN: Overwrites any supplied -f arguments if given
 if [[ -p /dev/stdin ]]; then  # If STDIN is not empty ...
+  # Use the text from STDIN, overwrites any supplied -f arguments
   text=$(</dev/stdin)
 else
+  # Use the text in the FILE
   text=$(cat $FILE)
 fi
 
@@ -100,14 +101,19 @@ if [[ $WORDS == 0 ]]; then
 fi
 
 
-# TODO: top 'n' most common words, where n is any positive integer
-if [[ -z $n && $n > 0 ]]; then
-  # TODO: sort + head
-  :
+# TOP 'n' most common words, where n is any positive integer
+if [[ -n $n && $n -gt 0 ]]; then
+  words_and_length=''
+  # TODO: separator
+  for word in ${!count[@]}; do
+    words_and_length+="${count[$word]} ${word} | "
+  done
+  echo $words_and_length
+  # echo cat $words_and_length | sort -n | head $n
 fi
 
 
-# TODO: sorted list of how often words appear of different lengths
+# Sorted list of how often words appear of different lengths
 if [[ $SORTED == 0 ]]; then
   # TODO: make sorted
 
