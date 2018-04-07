@@ -57,21 +57,18 @@ while :; do
 done
 # by now $@ has only rubish filtered out by 'getopt', could be a file name
 
-# STDIN: Overwrites any supplied -f arguments if given
-# FILE=${FILE:-$1}
-STDIN=$1  # FIXME: script should work like 'cat bash.txt | ./script -t 10 -w'
-
 
 # -- The algorithm --
-if [[ -z $STDIN ]]; then
-  text=$(cat $FILE)
+# STDIN: Overwrites any supplied -f arguments if given
+if [[ -p /dev/stdin ]]; then  # If STDIN is not empty ...
+  text=$(</dev/stdin)
 else
-  text=$STDIN
+  text=$(cat $FILE)
 fi
 
-
 # Create a list of words. Word is defined as the pattern '[a-zA-Z]+'.
-words=$(grep -E -o '[a-zA-Z]+' $FILE)
+words=$(echo $text | grep -E -o '[a-zA-Z]+')
+
 # Remove all all characters exept alphabetic, line endings or white spaces.
 # words=$(tr $text -dc '[:alpha:]\r\n ')
 
@@ -105,6 +102,7 @@ fi
 
 # TODO: top 'n' most common words, where n is any positive integer
 if [[ -z $n && $n > 0 ]]; then
+  # TODO: sort + head
   :
 fi
 
