@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Implement Bubble and David Shell sort algorithms using BASH
 # internal functionality only. Make a performance comparison
 # for sorting 1000 random numbers with 'time' utility.

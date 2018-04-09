@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Expand /scratch/scip/BASH/bin/expires script to get a proper
 # utility out of it. Your new script should:
 #

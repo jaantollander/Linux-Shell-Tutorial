@@ -103,13 +103,14 @@ fi
 
 # TOP 'n' most common words, where n is any positive integer
 if [[ -n $n && $n -gt 0 ]]; then
-  words_and_length=''
+  word_and_length=''
   # TODO: separator
   for word in ${!count[@]}; do
-    words_and_length+="${count[$word]} ${word} | "
+    length=${count[$word]}
+    word_and_length+="$length ${word}^"
   done
-  echo $words_and_length
-  # echo cat $words_and_length | sort -n | head $n
+  # TODO: print line by line
+  echo $(echo $word_and_length | tr '^' $'\n' | sort -n | tail -n $n)
 fi
 
 

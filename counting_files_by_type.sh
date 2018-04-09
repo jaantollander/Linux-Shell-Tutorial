@@ -17,8 +17,6 @@
 # the other one can use only BASH built-in functionality. The only
 # exception is 'file' utility itself.
 
-# TODO: getopt
-
 # Directory to search with default value of "."
 directory=${1:-.}
 
