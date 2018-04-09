@@ -102,34 +102,47 @@ fi
 
 
 # TOP 'n' most common words, where n is any positive integer
-if [[ -n $n && $n -gt 0 ]]; then
+if [[ -n $n && $n > 0 ]]; then
   word_and_length=''
-  # TODO: separator
+  sepw=','
+  sepl='^'
   for word in ${!count[@]}; do
     length=${count[$word]}
-    word_and_length+="$length ${word}^"
+    word_and_length+="${length}${sepw}${word}${sepl}"
   done
-  # TODO: print line by line
-  echo $(echo $word_and_length | tr '^' $'\n' | sort -n | tail -n $n)
+  most_common_words=$(echo $word_and_length | tr $sepl $'\n' | sort -n -r | head -n $n)
+  for word in $most_common_words; do
+    # TODO: perhaps change ordering from "length word" to "word length"?
+    echo $(echo $word | tr $sepw ' ')
+  done
 fi
 
 
 # Sorted list of how often words appear of different lengths
 if [[ $SORTED == 0 ]]; then
-  # TODO: make sorted
-
   declare -iA count_by_length
-  for word in ${!words}; do
+
+  for word in ${!count[@]}; do
     length=${#word}
     if [[ -z count_by_length[$length] ]]; then
-      count_by_length[$length]=${words[$word]}
+      count_by_length[$length]=${count[$word]}
     else
-      count_by_length[$length]+=${words[$word]}
+      count_by_length[$length]+=${count[$word]}
     fi
   done
 
-  echo "words # word length"
+  # TODO: sort count_by_length
+  sepw=','
+  sepl='^'
+  count_by_length_str=''
   for length in ${!count_by_length[@]}; do
-    echo ${count_by_length[$length]} $length
+    count_by_length_str+="${count_by_length[$length]}${sepw}${length}${sepl}"
+  done
+
+  count_by_length_sorted=$(echo $count_by_length_str | tr $sepl $'\n' | sort -r -k 2n -t $sepw)
+
+  echo words $'#\t' word length
+  for word in $count_by_length_sorted; do
+    echo $(echo $word | tr $sepw $'\t')
   done
 fi
