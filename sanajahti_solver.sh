@@ -49,16 +49,12 @@ done
 
 
 # -- The algorithm --
-
-# Dictionary file should be supplied.
-[[ -f dictionary_file ]] || { exit 1; }
-
-dictionary=$(cat dictionary_file)
+dictionary=$(cat $dictionary_file)
 string=$1
 
 # Input should be 16 characters long and only contain alphabetic characters
 # otherwise exit the program.
-[[ ${#string} != 16 ]] || { exit 1; }
+[[ ${#string} != 16 ]] && { echo "String should have 16 characters but only has ${#string}."; exit 1; }
 
 # Potential words
 words=''
@@ -68,11 +64,11 @@ construct_words() {
   indices=$1
   word=''
   for i in $indices; do
-    word+=${string:$i}
+    word+=${string:$i:1}
   done
-  words+=word
+  words+=$word
   words+=" "
-  # Contiguous substrings
+  # Contiguous substrings of length 3
   if [[ ${#word} == 4 ]]; then
     words+=${word:0:3}
     words+=" "
@@ -82,20 +78,34 @@ construct_words() {
 }
 
 # Find words vertically.
-$(construct_words "0 1 2 3")
+construct_words "0 1 2 3"
+construct_words "4 5 6 7"
+construct_words "8 9 10 11"
+construct_words "12 13 14 15"
 
 # Find words horizontally.
-
+construct_words "0 4 8 12"
+construct_words "1 5 9 13"
+construct_words "2 6 10 14"
+construct_words "3 7 11 15"
 
 # Find words diagonally (up-right -> down-left).
-
+construct_words "0 5 10 15"
+construct_words "1 6 11"
+construct_words "4 9 14"
 
 # Find words diagonally (down-right -> up-left).
-
+construct_words "12 9 6 3"
+construct_words "8 5 2"
+construct_words "13 10 7"
 
 # Test is a potential words is found in the dictionary and output it in to
 # the STDIN.
 for word in $words; do
-  echo words | grep -E "\^$word\$"
-  # TODO: output
+  # Check if the word is in the dictionary. Case insensitive.
+  # Works for unstructured dictionary but is slow.
+  mathing_lines=$(echo $dictionary | grep -E -c -i -m 1 "^$word\$")
+
+  # Output the word into STDOUT if the word in in the dictionary.
+  [[ $mathing_lines > 0 ]] && { echo $word; }
 done
