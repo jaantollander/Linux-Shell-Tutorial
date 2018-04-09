@@ -49,11 +49,9 @@ done
 
 
 # -- The algorithm --
-dictionary=$(cat $dictionary_file)
-string=$1
-
 # Input should be 16 characters long and only contain alphabetic characters
 # otherwise exit the program.
+string=$1
 [[ ${#string} != 16 ]] && { echo "String should have 16 characters but only has ${#string}."; exit 1; }
 
 # Potential words
@@ -102,10 +100,11 @@ construct_words "13 10 7"
 # Test is a potential words is found in the dictionary and output it in to
 # the STDIN.
 for word in $words; do
+  # TODO: convert windows style lineending to unix style
   # Check if the word is in the dictionary. Case insensitive.
-  # Works for unstructured dictionary but is slow.
-  mathing_lines=$(echo $dictionary | grep -E -c -i -m 1 "^$word\$")
+  pattern="^${word}$"
+  matching_lines=$(grep -E -c -i -m 1 $pattern $dictionary_file)
 
   # Output the word into STDOUT if the word in in the dictionary.
-  [[ $mathing_lines > 0 ]] && { echo $word; }
+  [[ $matching_lines > 0 ]] && { echo $word; }
 done
