@@ -64,10 +64,6 @@ else
 fi
 
 
-# TODO: report account expiration date
-# TODO: report amount of days till account is expired
-# TODO: report date when password has been lsat changed
-# TODO: compact output `-c`
 expires() {
   # Shows Aalto account expiration date, needs to be run
   # on Aalto Linux servers or workstations
@@ -77,18 +73,23 @@ expires() {
   # If login name omitted, $USER used by default
   u=$1
 
+  # TODO: report account expiration date
+  # accountExpires
+  # TODO: report amount of days till account is expired
+  # TODO: report date when password has been lsat changed
+  # badPasswordTime
+  # TODO: compact output `-c`
+
   # request the account info and pipe it to while loop
   net ads search samaccountname=$u accountExpires 2>/dev/null | \
   while read line; do
-
     # we read output line by line
-
-    # if this found, no user info is available
     if [[ "$line" =~ ^Got\ 0\ replies$ ]]; then
+      # if this found, no user info is available
       echo No account found: $u
       exit 1
-    # if string matches, get the number and convert it to human readable
     elif [[ "$line" =~ ^accountExpires:\ ([0-9]+)$ ]]; then
+      # if string matches, get the number and convert it to human readable
       date -d "1970-01-01 $(((${BASH_REMATCH[1]}/10000000)-11644473600)) sec GMT"
       exit 0
     fi
