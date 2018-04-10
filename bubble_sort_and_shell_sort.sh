@@ -92,3 +92,12 @@ shell_sort() {
   done
   echo
 }
+
+# Time
+numbers=$(shuf -i1-1000 -n1000)
+
+echo "Bubble sort"
+time bubble_sort $numbers > /dev/null
+
+echo "Shell sort"
+time shell_sort $numbers > /dev/null
