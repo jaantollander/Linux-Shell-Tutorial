@@ -28,7 +28,7 @@
 # assignment.
 
 
-# -- Arguments and options --
+# -- Options --
 # Source of the getopt template: http://scicomp.aalto.fi/training/linux-shell-tutorial.html#working-with-the-input
 # here is the whole trick: getopt validates the input parameters, returns the
 # correct ones then they are reassigned back to $@ with 'set --'
