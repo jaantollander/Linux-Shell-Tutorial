@@ -100,11 +100,10 @@ construct_words "13 10 7"
 # Test is a potential words is found in the dictionary and output it in to
 # the STDIN.
 for word in $words; do
-  # TODO: convert windows style lineending to unix style
   # Check if the word is in the dictionary. Case insensitive.
-  pattern="^${word}$"
+  pattern="^${word}\b"
   matching_lines=$(grep -E -c -i -m 1 $pattern $dictionary_file)
 
-  # Output the word into STDOUT if the word in in the dictionary.
+  # Output the word into STDOUT if the word is in the dictionary.
   [[ $matching_lines > 0 ]] && { echo $word; }
 done
