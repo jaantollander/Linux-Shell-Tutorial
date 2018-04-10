@@ -1,9 +1,9 @@
 # Linux Shell Tutorial Homework
 Homework exercises from [Linux shell tutorial](http://scicomp.aalto.fi/training/linux-shell-tutorial.html).
 
+*Shell scripting is like magic tricks for programmers...*
 
 NOTE: All the scripts must be compatible with Bash v4.3.
-
 
 ## 1. Counting files by type (10 points)
 

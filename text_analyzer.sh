@@ -102,7 +102,7 @@ fi
 
 
 # TOP 'n' most common words, where n is any positive integer
-if [[ -n $n && $n > 0 ]]; then
+if [[ -n $n && $n -gt 0 ]]; then
   word_and_length=''
   sepw=','
   sepl='^'
