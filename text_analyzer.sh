@@ -67,16 +67,16 @@ else
   text=$(cat $FILE)
 fi
 
-# Create a list of words. Word is defined as the pattern '[a-zA-Z]+'.
-words=$(echo $text | grep -E -o '[a-zA-Z]+')
+# Create a list of words. Word is defined as the pattern '[a-zA-Z]+'. Convert
+# all words to lower case.
+words=$(echo $text | grep -E -o '[a-zA-Z]+' | tr [:upper:] [:lower:])
 
 # Remove all all characters exept alphabetic, line endings or white spaces.
-# words=$(tr $text -dc '[:alpha:]\r\n ')
+# TODO? tr -dc '[:alpha:]\r\n '
 
 # Count the number of times a particular word appears in the text
 declare -iA count
 for word in $words; do
-  #TODO: make case insensitivity
   if [[ -z count[$word] ]]; then
     count[${word}]=1
   else
@@ -103,17 +103,18 @@ fi
 
 # TOP 'n' most common words, where n is any positive integer
 if [[ -n $n && $n -gt 0 ]]; then
-  word_and_length=''
+  word_and_count=''
   sepw=','
   sepl='^'
   for word in ${!count[@]}; do
-    length=${count[$word]}
-    word_and_length+="${length}${sepw}${word}${sepl}"
+    count_=${count[$word]}
+    word_and_count+="${count_}${sepw}${word}${sepl}"
   done
-  most_common_words=$(echo $word_and_length | tr $sepl $'\n' | sort -n -r | head -n $n)
+  most_common_words=$(echo $word_and_count | tr $sepl $'\n' | sort -n -r | head -n $n)
+  echo -e "count #\tword"
   for word in $most_common_words; do
-    # TODO: perhaps change ordering from "length word" to "word length"?
-    echo $(echo $word | tr $sepw ' ')
+    # TODO: perhaps change ordering from "count word" to "word count"?
+    echo -e "$(echo $word | tr $sepw $'\t')"
   done
 fi
 
@@ -141,8 +142,8 @@ if [[ $SORTED == 0 ]]; then
 
   count_by_length_sorted=$(echo $count_by_length_str | tr $sepl $'\n' | sort -r -k 2n -t $sepw)
 
-  echo words $'#\t' word length
+  echo -e "words #\tword length"
   for word in $count_by_length_sorted; do
-    echo $(echo $word | tr $sepw $'\t')
+    echo -e "$(echo $word | tr $sepw $'\t')"
   done
 fi
