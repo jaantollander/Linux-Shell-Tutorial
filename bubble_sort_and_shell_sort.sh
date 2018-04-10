@@ -53,6 +53,42 @@ bubble_sort() {
 }
 
 shell_sort() {
-  # TODO: implementation
-  :
+  # Input is space separated string of numbers: `n_1 n_2 n_3 ... n_m`.
+  if [[ -p /dev/stdin ]]; then # If STDIN is not empty ...
+    # `echo $(shuf -i1-100 -n10) | bubble_sort)`
+    numbers=$(</dev/stdin)
+  else
+    # `bubble_sort $(shuf -i1-100 -n10)`
+    numbers=$@
+  fi
+
+  # Create an array from the input.
+  array=()
+  for i in $numbers; do
+    array+=($i)
+  done
+
+  # Shell sort algorithm.
+  # https://www.geeksforgeeks.org/shellsort/
+  n=${#array[@]}
+  gap=$(( $n/2 )) # Floor division
+
+  while [[ $gap -gt 0 ]]; do
+    for (( i = $gap; i < $n; i++ )); do
+      temp=${array[$i]}
+      j=$i
+      while [[ $j -ge $gap && ${array[$(( $j-$gap ))]} -gt $temp ]]; do
+        array[$j]=${array[$(( $j-$gap ))]}
+        j=$(( $j-$gap ))
+      done
+      array[$j]=$temp
+    done
+    gap=$(( $gap/2 ))
+  done
+
+  # Output the sorted array into STDOUT.
+  for i in ${array[@]}; do
+    echo -n "$i "
+  done
+  echo
 }
