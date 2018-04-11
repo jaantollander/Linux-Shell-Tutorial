@@ -86,13 +86,13 @@ done
 
 
 # Reports total number of characters in the document
-if [[ $CHARACTERS == 0 ]]; then
+if [[ $CHARACTERS ]]; then
   echo "Total number of characters in the document: ${#text}"
 fi
 
 
 # Reports total number of words in the document
-if [[ $WORDS == 0 ]]; then
+if [[ $WORDS ]]; then
   number_of_words=0
   for i in ${count[@]}; do
     number_of_words=$(($number_of_words+$i))
@@ -120,7 +120,7 @@ fi
 
 
 # Sorted list of how often words appear of different lengths
-if [[ $SORTED == 0 ]]; then
+if [[ $SORTED ]]; then
   declare -iA count_by_length
 
   for word in ${!count[@]}; do

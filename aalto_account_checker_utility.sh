@@ -70,46 +70,34 @@ expires() {
   # Usage: $0 [aalto_login_name]
   # Remember to run 'kinit' if you SSH to kosh/lyta etc
 
-  # If login name omitted, $USER used by default
   user=$1
+  query=$(net ads search samaccountname=$user accountExpires pwdLastSet 2>/dev/null)
 
-  account_expires=0
-  password_last_changed=0
-
-  # request the account info and pipe it to while loop
-  net ads search samaccountname=$user accountExpires 2>/dev/null | \
-  while read line; do
-    # we read output line by line
-    if [[ "$line" =~ ^Got\ 0\ replies$ ]]; then
-      # if this found, no user info is available
-      echo No account found: $user
-      exit 1
-    elif [[ "$line" =~ ^accountExpires:\ ([0-9]+)$ ]]; then
-      # if string matches, get the number and convert it to human readable
-      account_expires=$((($BASH_REMATCH[1]/10000000)-11644473600))
-    elif [[ "$line" =~ ^pwdLastSet:\ ([0-9]+)$ ]]; then
-      password_last_changed=$((($BASH_REMATCH[1]/10000000)-11644473600))
-    fi
-  done
-
-  now=$(date +%s)
-  days_till_expiration=$(($account_expires - $now / (60*60*24)))
-
-  if [[ $COMPACT==0 ]]; then
-    format='+%Y-%m-%d'
-    echo -n $user:
-    echo -n $(date $format -d "1970-01-01 $account_expires sec GMT"):
-    echo -n $days_till_expiration:
-    echo $(date $format -d "1970-01-01 $password_last_changed sec GMT")
+  if [[ "$query" =~ 'Got 0 replies' ]]; then
+    # if this found, no user info is available
+    echo No account found: $user
   else
-    echo $user
-    echo -e "  Account expires: $(date -d "1970-01-01 $account_expires sec GMT")"
-    echo -e "  Days till expiration: $days_till_expiration"
-    echo -e "  Password last changed: $(date -d "1970-01-01 $password_last_changed sec GMT")"
-  fi
+    account_expires=$(echo $query | grep -E -o 'accountExpires: ([0-9]+)' | grep -E -o '[0-9]+')
+    account_expires=$(( ($account_expires/10000000)-11644473600 ))
+    password_last_set=$(echo $query | grep -E -o 'pwdLastSet: ([0-9]+)' | grep -E -o '[0-9]+')
+    password_last_set=$(( ($password_last_set/10000000)-11644473600 ))
 
-  # a shorter version can be implemented with grep, if errors handling
-  # does not matter
+    now=$(date +%s)
+    days_till_expiration=$(( ($account_expires - $now) / (60*60*24) ))
+
+    if [[ $COMPACT ]]; then
+      format='+%Y-%m-%d'
+      echo -n $user:
+      echo -n $(date $format -d "1970-01-01 $account_expires sec GMT"):
+      echo -n $days_till_expiration:
+      echo $(date $format -d "1970-01-01 $password_last_set sec GMT")
+    else
+      echo $user
+      echo -e "  Account expires: $(date -d "1970-01-01 $account_expires sec GMT")"
+      echo -e "  Days till expiration: $days_till_expiration"
+      echo -e "  Password last changed: $(date -d "1970-01-01 $password_last_set sec GMT")"
+    fi
+  fi
 }
 
 
