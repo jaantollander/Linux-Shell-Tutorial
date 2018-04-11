@@ -71,29 +71,42 @@ expires() {
   # Remember to run 'kinit' if you SSH to kosh/lyta etc
 
   # If login name omitted, $USER used by default
-  u=$1
+  user=$1
 
-  # TODO: report account expiration date
-  # accountExpires
-  # TODO: report amount of days till account is expired
-  # TODO: report date when password has been lsat changed
-  # badPasswordTime
-  # TODO: compact output `-c`
+  account_expires=0
+  password_last_changed=0
 
   # request the account info and pipe it to while loop
-  net ads search samaccountname=$u accountExpires 2>/dev/null | \
+  net ads search samaccountname=$user accountExpires 2>/dev/null | \
   while read line; do
     # we read output line by line
     if [[ "$line" =~ ^Got\ 0\ replies$ ]]; then
       # if this found, no user info is available
-      echo No account found: $u
+      echo No account found: $user
       exit 1
     elif [[ "$line" =~ ^accountExpires:\ ([0-9]+)$ ]]; then
       # if string matches, get the number and convert it to human readable
-      date -d "1970-01-01 $(((${BASH_REMATCH[1]}/10000000)-11644473600)) sec GMT"
-      exit 0
+      account_expires=$((($BASH_REMATCH[1]/10000000)-11644473600))
+    elif [[ "$line" =~ ^pwdLastSet:\ ([0-9]+)$ ]]; then
+      password_last_changed=$((($BASH_REMATCH[1]/10000000)-11644473600))
     fi
   done
+
+  now=$(date +%s)
+  days_till_expiration=$(($account_expires - $now / (60*60*24)))
+
+  if [[ $COMPACT==0 ]]; then
+    format='+%Y-%m-%d'
+    echo -n $user:
+    echo -n $(date $format -d "1970-01-01 $account_expires sec GMT"):
+    echo -n $days_till_expiration:
+    echo $(date $format -d "1970-01-01 $password_last_changed sec GMT")
+  else
+    echo $user
+    echo -e "  Account expires: $(date -d "1970-01-01 $account_expires sec GMT")"
+    echo -e "  Days till expiration: $days_till_expiration"
+    echo -e "  Password last changed: $(date -d "1970-01-01 $password_last_changed sec GMT")"
+  fi
 
   # a shorter version can be implemented with grep, if errors handling
   # does not matter
@@ -102,5 +115,5 @@ expires() {
 
 # Loop over the users and output the information into the STDOUT
 for user in $users; do
-  expires user
+  expires $user
 done
