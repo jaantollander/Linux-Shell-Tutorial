@@ -103,14 +103,16 @@ fi
 
 # TOP 'n' most common words, where n is any positive integer
 if [[ -n $n && $n -gt 0 ]]; then
-  word_and_count=''
   sepw=','
   sepl='^'
+  word_and_count=''
   for word in ${!count[@]}; do
     count_=${count[$word]}
     word_and_count+="${count_}${sepw}${word}${sepl}"
   done
-  most_common_words=$(echo $word_and_count | tr $sepl $'\n' | sort -n -r | head -n $n)
+
+  most_common_words=$(echo $word_and_count | tr $sepl $'\n' | sort -n -r 2>/dev/null | head -n $n)
+
   echo -e "count #\tword"
   for word in $most_common_words; do
     # TODO: perhaps change ordering from "count word" to "word count"?
